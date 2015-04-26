@@ -11,25 +11,32 @@ using namespace std;
 
 void *checkTemp(void *cam){
     CSBIGCam *camera = (CSBIGCam *)cam;
-    double ccdTemp, setpointTemp, percentTE;
+    double ccdTemp = (double)rand()/((double)RAND_MAX);
+    double percentTE = (double)rand()/((double)RAND_MAX);
+    double setpointTemp;
+    int count=0;
 
     MY_LOGICAL enabled=true;
 
+    cout << "Set point temperature = ";
+    cin >> setpointTemp;
+
+
     while(true){
-        cout << "Sto regolando ..." << endl;
+        /*camera->SetTemperatureRegulation(enabled2, setpointTemp);
+        camera->QueryTemperatureStatus(enabled, ccdTemp, setpointTemp, percentTE);*/
+        ccdTemp = (double)rand()/((double)RAND_MAX);
+        percentTE = (double)rand()/((double)RAND_MAX);
+        cout << "Temp control: CCDTemp=" << ccdTemp << " STP="<<setpointTemp << " Power=" <<percentTE*100 << "%";
+        printf("\n\033[F\033[J");
+        ++count;
+
         sleep(1);
     }
-    /*camera->SetTemperatureRegulation(enabled2, setpointTemp);*/
+pthread_exit(cam);
 
     return NULL;
 }
-
-
-
-
-
-
-
 
 int main(){
     double ccdTemp, setpointTemp, percentTE;
@@ -75,9 +82,14 @@ LOOP:do{
         goto LOOP;
         }while(true);
 stop:{}
+
     }
 
-    sleep(50);
+
+    pthread_create(&Temp_thread, NULL, checkTemp, camera);
+    double ap;
+
+    sleep(10);
 
     camera->~CSBIGCam();
 
