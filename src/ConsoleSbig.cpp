@@ -4,39 +4,11 @@
 #include <vector>
 #include <ctime>
 #include <string>
+#include <cmath>
+#include <pthread.h>
+#include "getImage.h"
 
 using namespace std;
-
-
-
-void *checkTemp(void *cam){
-    CSBIGCam *camera = (CSBIGCam *)cam;
-    double ccdTemp = (double)rand()/((double)RAND_MAX);
-    double percentTE = (double)rand()/((double)RAND_MAX);
-    double setpointTemp;
-    int count=0;
-
-    MY_LOGICAL enabled=true;
-
-    cout << "Set point temperature = ";
-    cin >> setpointTemp;
-
-
-    while(true){
-        /*camera->SetTemperatureRegulation(enabled2, setpointTemp);
-        camera->QueryTemperatureStatus(enabled, ccdTemp, setpointTemp, percentTE);*/
-        ccdTemp = (double)rand()/((double)RAND_MAX);
-        percentTE = (double)rand()/((double)RAND_MAX);
-        cout << "Temp control: CCDTemp=" << ccdTemp << " STP="<<setpointTemp << " Power=" <<percentTE*100 << "%";
-        printf("\n\033[F\033[J");
-        ++count;
-
-        sleep(1);
-    }
-pthread_exit(cam);
-
-    return NULL;
-}
 
 int main(){
     double ccdTemp, setpointTemp, percentTE;
@@ -45,7 +17,7 @@ int main(){
     odp.deviceType = DEV_USB1;
     MY_LOGICAL enabled;
 
-    pthread_t Temp_thread;
+    pthread_t Temp_thread, GImg_thread;
 
 
     //il costruttore CSBIGCam(OpenDeviceParams) fa operDriver e OpenDevice
@@ -70,8 +42,9 @@ LOOP:do{
         cout << "Switch on Temperature Regulation? (yes/no): " ;
         cin >> yes_temp;
         if(yes_temp=="yes"){
-            cout << "accendo!" << endl;
+            cout << "Create checkTemp thread...";
             pthread_create(&Temp_thread, NULL, checkTemp, camera);
+            cout << "done!"<<endl;
             goto stop;
         }
         if(yes_temp=="no") {cout << "lascio spendo" << endl; goto stop;}
@@ -84,19 +57,12 @@ LOOP:do{
 stop:{}
 
     }
+    pthread_create(&GImg_thread, NULL, grabImage, camera);
+    pthread_join(GImg_thread, NULL);
 
 
-    pthread_create(&Temp_thread, NULL, checkTemp, camera);
-    double ap;
-
-    sleep(10);
 
     camera->~CSBIGCam();
 
 	return 0;
 }
-
-
-
-
-

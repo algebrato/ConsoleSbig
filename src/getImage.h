@@ -1,25 +1,5 @@
-#include <vector>
-#include <iterator>
-#include <iostream>
-#include "csbigcam.h"
-#include "csbigimg.h"
-
-using namespace std;
-
-class Cam : public CSBIGCam {
-
-
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
+#ifndef GETIMAGEMIO_HPP
+#define GETIMAGEMIO_HPP
+void *checkTemp(void *cam);
+void *grabImage(void *cam);
+#endif
