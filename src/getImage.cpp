@@ -12,7 +12,7 @@ using namespace std;
 pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t  cond  = PTHREAD_COND_INITIALIZER;
 pthread_mutex_t mutex2 = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t  cond2  = PTHREAD_COND_INITIALIZER;
+
 
 
 void *checkTemp(void *cam){
@@ -27,6 +27,7 @@ void *checkTemp(void *cam){
     int count=0;
 
     MY_LOGICAL enabled=true;
+    MY_LOGICAL isenable;
 
     cout << "Set start point temperature = ";
     cin >> setpointTemp;
@@ -37,21 +38,20 @@ void *checkTemp(void *cam){
 
 
     while(true){
-        /*camera->SetTemperatureRegulation(enabled2, setpointTemp);
-        camera->QueryTemperatureStatus(enabled, ccdTemp, setpointTemp, percentTE);*/
+        //camera->SetTemperatureRegulation(enabled, setpointTemp);
+        //camera->QueryTemperatureStatus(isenable, ccdTemp, setpointTemp, percentTE);
         printf("\n\033[F\033[J");
         ccdTemp = (double)rand()/((double)RAND_MAX);
         percentTE = (double)rand()/((double)RAND_MAX);
         cout << "Temp control: CCDTemp=" << ccdTemp << " STP="<<setpointTemp << " Power=" <<percentTE*100 << "%";
 
-        if(count%10==0 && setpointTemp > endpointTemp){
+        if(count%30==0 && setpointTemp > endpointTemp){
             setpointTemp -= 3.00;
             if(setpointTemp<endpointTemp) setpointTemp = endpointTemp;
         }
 
 
         if(abs(endpointTemp-ccdTemp) < 0.05){
-            pthread_cond_signal(&cond2);
             pthread_mutex_unlock(&mutex2);
         }
         ++count;
@@ -65,7 +65,7 @@ pthread_exit(ret);
 
 
 void *grabImage(void *cam){
-    pthread_mutex_lock( &mutex );
+    pthread_mutex_lock(&mutex);
 
     int *ret;
     int num_img;
@@ -78,7 +78,8 @@ void *grabImage(void *cam){
     cin >> name_img;
     cout << "Path to save = ";
     cin >> path_save;
-    cout<< "Sensor termalization..."<<endl;
+    cout << "Sensor termalization..."<<endl;
+
     pthread_cond_signal(&cond);
     pthread_mutex_unlock(&mutex);
     pthread_mutex_lock(&mutex2);
