@@ -9,7 +9,6 @@
 
 using namespace std;
 
-int                 conditionMet = 0;
 pthread_cond_t      cond  = PTHREAD_COND_INITIALIZER;
 pthread_cond_t      cond2  = PTHREAD_COND_INITIALIZER;
 pthread_mutex_t     mutex = PTHREAD_MUTEX_INITIALIZER;
@@ -60,6 +59,7 @@ void *checkTemp(void *cam){
         ++count;
         sleep(1);
     }
+    pthread_exit(ret);
 
     return NULL;
 }
@@ -70,11 +70,10 @@ void *grabImage(void *cam){
 
     pthread_mutex_lock(&mutex);
 
-
     int *ret;
     int num_img;
     string name_img;
-    string path_save;
+    string path_save("/home/algebrato/");
     cout << endl;
     cout << "Number of images in the sequence = ";
     cin >> num_img;
@@ -94,9 +93,5 @@ void *grabImage(void *cam){
         sleep(5);
         cout << endl << "Image "<< i+1 << " grabbed" << endl;
     }
-
-
-
-
-
+    pthread_exit(ret);
 }

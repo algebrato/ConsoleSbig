@@ -23,7 +23,7 @@ int main(){
     //ctor CSBIGCam(OpenDeviceParams) do--> operDriver and OpenDevice
     CSBIGCam *camera;
     camera = new CSBIGCam(odp);
-/*    if((camera->EstablishLink()) != CE_NO_ERROR){
+    if((camera->EstablishLink()) != CE_NO_ERROR){
         cout << "Link error please check USB cable status" << endl;
         return 1;
     }
@@ -44,6 +44,7 @@ LOOP:do{
         if(yes_temp=="yes"){
             cout << "Create checkTemp thread...";
             pthread_create(&Temp_thread, NULL, checkTemp, camera);
+            sleep(1);
             cout << "done!"<<endl;
             goto stop;
         }
@@ -56,15 +57,11 @@ LOOP:do{
         }while(true);
 stop:{}
 
-    }*/
-    pthread_create(&Temp_thread, NULL, checkTemp, camera);
-    sleep(1);
+    }
     pthread_create(&GImg_thread, NULL, grabImage, camera);
     pthread_join(GImg_thread, NULL);
 
 
-
     camera->~CSBIGCam();
-
 	return 0;
 }
