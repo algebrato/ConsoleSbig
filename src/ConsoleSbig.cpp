@@ -58,6 +58,7 @@ stop:{}
 
     }*/
     pthread_create(&Temp_thread, NULL, checkTemp, camera);
+    sleep(1);
     pthread_create(&GImg_thread, NULL, grabImage, camera);
     pthread_join(GImg_thread, NULL);
 

@@ -9,21 +9,23 @@
 
 using namespace std;
 
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t  cond  = PTHREAD_COND_INITIALIZER;
-pthread_mutex_t mutex2 = PTHREAD_MUTEX_INITIALIZER;
+int                 conditionMet = 0;
+pthread_cond_t      cond  = PTHREAD_COND_INITIALIZER;
+pthread_cond_t      cond2  = PTHREAD_COND_INITIALIZER;
+pthread_mutex_t     mutex = PTHREAD_MUTEX_INITIALIZER;
 
 
 
 void *checkTemp(void *cam){
     pthread_mutex_lock(&mutex);
-    pthread_mutex_lock(&mutex2);
+
     int *ret;
     CSBIGCam *camera = (CSBIGCam *)cam;
     double ccdTemp = (double)rand()/((double)RAND_MAX);
     double percentTE = (double)rand()/((double)RAND_MAX);
     double setpointTemp;
     double endpointTemp;
+    int termalized=1;
     int count=0;
 
     MY_LOGICAL enabled=true;
@@ -34,8 +36,7 @@ void *checkTemp(void *cam){
     cout << "Set end point temperature   = ";
     cin >> endpointTemp;
 
-    pthread_cond_wait( &cond, &mutex );
-
+    pthread_cond_wait(&cond,&mutex);
 
     while(true){
         //camera->SetTemperatureRegulation(enabled, setpointTemp);
@@ -50,14 +51,15 @@ void *checkTemp(void *cam){
             if(setpointTemp<endpointTemp) setpointTemp = endpointTemp;
         }
 
-
-        if(abs(endpointTemp-ccdTemp) < 0.05){
-            pthread_mutex_unlock(&mutex2);
+        if(termalized==1 && abs(endpointTemp-ccdTemp) < 0.1){
+            cout << "Termalized!!" << endl ;
+            termalized=0;
+            pthread_cond_signal(&cond2);
+            pthread_mutex_unlock(&mutex);
         }
         ++count;
         sleep(1);
     }
-pthread_exit(ret);
 
     return NULL;
 }
@@ -65,7 +67,9 @@ pthread_exit(ret);
 
 
 void *grabImage(void *cam){
+
     pthread_mutex_lock(&mutex);
+
 
     int *ret;
     int num_img;
@@ -81,11 +85,11 @@ void *grabImage(void *cam){
     cout << "Sensor termalization..."<<endl;
 
     pthread_cond_signal(&cond);
-    pthread_mutex_unlock(&mutex);
-    pthread_mutex_lock(&mutex2);
+    pthread_cond_wait(&cond2,&mutex);
 
 
-    cout << endl <<"Termalized!"<< endl << "Grabbing ...." << endl;
+
+    cout << endl << "Grabbing ...." << endl;
     for(int i=0; i<num_img; ++i){
         sleep(5);
         cout << endl << "Image "<< i+1 << " grabbed" << endl;
@@ -93,6 +97,6 @@ void *grabImage(void *cam){
 
 
 
-    pthread_exit(ret);
+
 
 }
