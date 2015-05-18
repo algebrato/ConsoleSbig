@@ -20,7 +20,7 @@ int main(){
     pthread_t Temp_thread, GImg_thread;
 
 
-    //il costruttore CSBIGCam(OpenDeviceParams) fa operDriver e OpenDevice
+    //ctor CSBIGCam(OpenDeviceParams) do--> operDriver and OpenDevice
     CSBIGCam *camera;
     camera = new CSBIGCam(odp);
 /*    if((camera->EstablishLink()) != CE_NO_ERROR){
@@ -36,7 +36,7 @@ int main(){
         cout <<" setPoint    = " << setpointTemp << endl;
         cout << "percent     = " << percentTE << endl;
     }else{
-        cout << "Temperature control is off" << endl;
+        cout << "Temperature Control is off" << endl;
 
 LOOP:do{
         cout << "Switch on Temperature Regulation? (yes/no): " ;
@@ -47,7 +47,7 @@ LOOP:do{
             cout << "done!"<<endl;
             goto stop;
         }
-        if(yes_temp=="no") {cout << "lascio spendo" << endl; goto stop;}
+        if(yes_temp=="no") {cout << "Temperature regulation is off" << endl; goto stop;}
         if(yes_temp != "yes" && yes_temp != "no") {
             cout << "Error! write \"yes\" or \"no\" " <<endl;
 

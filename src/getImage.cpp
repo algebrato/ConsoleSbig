@@ -52,7 +52,7 @@ void *checkTemp(void *cam){
         }
 
         if(termalized==1 && abs(endpointTemp-ccdTemp) < 0.1){
-            cout << "Termalized!!" << endl ;
+            cout << endl << "Termalized!!" << endl ;
             termalized=0;
             pthread_cond_signal(&cond2);
             pthread_mutex_unlock(&mutex);
