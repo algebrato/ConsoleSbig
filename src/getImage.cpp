@@ -70,10 +70,10 @@ void *checkTemp(void *cam){
 
 
             while(true){
-		    ++counter;
+		    counter++;
 		    camera->QueryTemperatureStatus(isenable, ccdTemp, setpointTemp, percentTE);
 		    printf("\n\033[F\033[J");
-		    cout << "Temp control: CCDTemp=" << ccdTemp << " STP="<<setpointTemp << " Power=" <<percentTE*100 << "%" << " Iterator = (" << counter <<"/35)";
+		    cout << "Temp control: CCDTemp=" << ccdTemp << " STP="<<setpointTemp << " Power=" <<percentTE*100 << "%" << " Iterator = (" << counter <<"/35)"; //33-->35 ???
 		    if(counter%35==0){
 			    cout <<endl;
 			    cout << "Start image grab? (yes/no): ";
