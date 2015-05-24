@@ -1,1 +1,0 @@
-/home/stefanomandelli/CCDOPSL/ConsoleSbig/CMakeFiles/ConsoleSbig.dir
