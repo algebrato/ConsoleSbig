@@ -32,9 +32,13 @@ int main(){
     cout << "Model = " << camera->GetCameraTypeString() << "\tLink status:UP" << endl;
     if(enabled){
         cout << "Temperature control is on" <<endl;
-        cout << "Temperature ="  << ccdTemp << endl;
-        cout <<" setPoint    = " << setpointTemp << endl;
-        cout << "percent     = " << percentTE << endl;
+        cout << "Temperature = "  << ccdTemp << endl;
+        cout << "SetPoint    = " << setpointTemp << endl;
+        cout << "Percent     = " << percentTE << endl;
+	cout << endl;
+	cout << "Starting Temperature Control Thread..." << endl;
+	cout << endl;
+	pthread_create(&Temp_thread, NULL, checkTemp, camera);
     }else{
         cout << "Temperature Control is off" << endl;
 
@@ -42,10 +46,9 @@ LOOP:do{
         cout << "Switch on Temperature Regulation? (yes/no): " ;
         cin >> yes_temp;
         if(yes_temp=="yes"){
-            cout << "Create checkTemp thread...";
+            cout << "Create checkTemp thread..." << endl;
             pthread_create(&Temp_thread, NULL, checkTemp, camera);
             sleep(1);
-            cout << "done!"<<endl;
             goto stop;
         }
         if(yes_temp=="no") {cout << "Temperature regulation is off" << endl; goto stop;}
