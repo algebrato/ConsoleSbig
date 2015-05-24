@@ -1,0 +1,1 @@
+/home/algebrato/ConsoleSbig/CMakeFiles/ConsoleSbig.dir

@@ -1,0 +1,86 @@
+Performing C++ SOURCE FILE Test COMPILER_SUPPORTS_CXX11 failed with the following output:
+Change Dir: /home/algebrato/ConsoleSbig/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTryCompileExec827939060/fast"
+/usr/bin/make -f CMakeFiles/cmTryCompileExec827939060.dir/build.make CMakeFiles/cmTryCompileExec827939060.dir/build
+make[1]: Entering directory '/home/algebrato/ConsoleSbig/CMakeFiles/CMakeTmp'
+/usr/bin/cmake -E cmake_progress_report /home/algebrato/ConsoleSbig/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building CXX object CMakeFiles/cmTryCompileExec827939060.dir/src.cxx.o
+/usr/bin/c++    -L /usr/local/lib -L /data/fits/cfitsio/lib/ -lm -lsbigudrv -lcfitsio -lm -lpthread -I /usr/include/libusb-1.0/ -I /usr/include/libusb-1.0/ -I /data/fits/cfitsio -m64 -O2 -g -std=c++11 -Wall -std=c++11 -DCOMPILER_SUPPORTS_CXX11   -std=c++11 -o CMakeFiles/cmTryCompileExec827939060.dir/src.cxx.o -c /home/algebrato/ConsoleSbig/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTryCompileExec827939060
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec827939060.dir/link.txt --verbose=1
+/usr/bin/c++    -L /usr/local/lib -L /data/fits/cfitsio/lib/ -lm -lsbigudrv -lcfitsio -lm -lpthread -I /usr/include/libusb-1.0/ -I /usr/include/libusb-1.0/ -I /data/fits/cfitsio -m64 -O2 -g -std=c++11 -Wall -std=c++11 -DCOMPILER_SUPPORTS_CXX11    CMakeFiles/cmTryCompileExec827939060.dir/src.cxx.o  -o cmTryCompileExec827939060 -rdynamic 
+/usr/bin/ld: cannot find crt1.o: No such file or directory
+/usr/bin/ld: cannot find crti.o: No such file or directory
+/usr/bin/ld: skipping incompatible /usr/local/lib/libsbigudrv.so when searching for -lsbigudrv
+/usr/bin/ld: skipping incompatible //usr/local/lib/libsbigudrv.so when searching for -lsbigudrv
+/usr/bin/ld: cannot find -lsbigudrv
+/usr/bin/ld: cannot find -lcfitsio
+/usr/bin/ld: cannot find -lm
+/usr/bin/ld: cannot find -lpthread
+/usr/bin/ld: skipping incompatible /usr/lib/gcc/i586-linux-gnu/4.9/libstdc++.so when searching for -lstdc++
+/usr/bin/ld: skipping incompatible /usr/lib/gcc/i586-linux-gnu/4.9/libstdc++.a when searching for -lstdc++
+/usr/bin/ld: cannot find -lstdc++
+/usr/bin/ld: cannot find -lm
+/usr/bin/ld: skipping incompatible /usr/lib/gcc/i586-linux-gnu/4.9/libgcc_s.so when searching for -lgcc_s
+/usr/bin/ld: cannot find -lgcc_s
+/usr/bin/ld: skipping incompatible /usr/lib/gcc/i586-linux-gnu/4.9/libgcc.a when searching for -lgcc
+/usr/bin/ld: cannot find -lgcc
+/usr/bin/ld: cannot find -lc
+/usr/bin/ld: skipping incompatible /usr/lib/gcc/i586-linux-gnu/4.9/libgcc_s.so when searching for -lgcc_s
+/usr/bin/ld: cannot find -lgcc_s
+/usr/bin/ld: skipping incompatible /usr/lib/gcc/i586-linux-gnu/4.9/libgcc.a when searching for -lgcc
+/usr/bin/ld: cannot find -lgcc
+/usr/bin/ld: cannot find crtn.o: No such file or directory
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTryCompileExec827939060.dir/build.make:88: recipe for target 'cmTryCompileExec827939060' failed
+make[1]: *** [cmTryCompileExec827939060] Error 1
+make[1]: Leaving directory '/home/algebrato/ConsoleSbig/CMakeFiles/CMakeTmp'
+Makefile:118: recipe for target 'cmTryCompileExec827939060/fast' failed
+make: *** [cmTryCompileExec827939060/fast] Error 2
+
+Source file was:
+int main() { return 0; }
+Performing C++ SOURCE FILE Test COMPILER_SUPPORTS_CXX0X failed with the following output:
+Change Dir: /home/algebrato/ConsoleSbig/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTryCompileExec2856377133/fast"
+/usr/bin/make -f CMakeFiles/cmTryCompileExec2856377133.dir/build.make CMakeFiles/cmTryCompileExec2856377133.dir/build
+make[1]: Entering directory '/home/algebrato/ConsoleSbig/CMakeFiles/CMakeTmp'
+/usr/bin/cmake -E cmake_progress_report /home/algebrato/ConsoleSbig/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building CXX object CMakeFiles/cmTryCompileExec2856377133.dir/src.cxx.o
+/usr/bin/c++    -L /usr/local/lib -L /data/fits/cfitsio/lib/ -lm -lsbigudrv -lcfitsio -lm -lpthread -I /usr/include/libusb-1.0/ -I /usr/include/libusb-1.0/ -I /data/fits/cfitsio -m64 -O2 -g -std=c++11 -Wall -std=c++11 -DCOMPILER_SUPPORTS_CXX0X   -std=c++0x -o CMakeFiles/cmTryCompileExec2856377133.dir/src.cxx.o -c /home/algebrato/ConsoleSbig/CMakeFiles/CMakeTmp/src.cxx
+Linking CXX executable cmTryCompileExec2856377133
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec2856377133.dir/link.txt --verbose=1
+/usr/bin/c++    -L /usr/local/lib -L /data/fits/cfitsio/lib/ -lm -lsbigudrv -lcfitsio -lm -lpthread -I /usr/include/libusb-1.0/ -I /usr/include/libusb-1.0/ -I /data/fits/cfitsio -m64 -O2 -g -std=c++11 -Wall -std=c++11 -DCOMPILER_SUPPORTS_CXX0X    CMakeFiles/cmTryCompileExec2856377133.dir/src.cxx.o  -o cmTryCompileExec2856377133 -rdynamic 
+/usr/bin/ld: cannot find crt1.o: No such file or directory
+/usr/bin/ld: cannot find crti.o: No such file or directory
+/usr/bin/ld: skipping incompatible /usr/local/lib/libsbigudrv.so when searching for -lsbigudrv
+/usr/bin/ld: skipping incompatible //usr/local/lib/libsbigudrv.so when searching for -lsbigudrv
+/usr/bin/ld: cannot find -lsbigudrv
+/usr/bin/ld: cannot find -lcfitsio
+/usr/bin/ld: cannot find -lm
+/usr/bin/ld: cannot find -lpthread
+/usr/bin/ld: skipping incompatible /usr/lib/gcc/i586-linux-gnu/4.9/libstdc++.so when searching for -lstdc++
+/usr/bin/ld: skipping incompatible /usr/lib/gcc/i586-linux-gnu/4.9/libstdc++.a when searching for -lstdc++
+/usr/bin/ld: cannot find -lstdc++
+/usr/bin/ld: cannot find -lm
+/usr/bin/ld: skipping incompatible /usr/lib/gcc/i586-linux-gnu/4.9/libgcc_s.so when searching for -lgcc_s
+/usr/bin/ld: cannot find -lgcc_s
+/usr/bin/ld: skipping incompatible /usr/lib/gcc/i586-linux-gnu/4.9/libgcc.a when searching for -lgcc
+/usr/bin/ld: cannot find -lgcc
+/usr/bin/ld: cannot find -lc
+/usr/bin/ld: skipping incompatible /usr/lib/gcc/i586-linux-gnu/4.9/libgcc_s.so when searching for -lgcc_s
+/usr/bin/ld: cannot find -lgcc_s
+/usr/bin/ld: skipping incompatible /usr/lib/gcc/i586-linux-gnu/4.9/libgcc.a when searching for -lgcc
+/usr/bin/ld: cannot find -lgcc
+/usr/bin/ld: cannot find crtn.o: No such file or directory
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTryCompileExec2856377133.dir/build.make:88: recipe for target 'cmTryCompileExec2856377133' failed
+make[1]: *** [cmTryCompileExec2856377133] Error 1
+make[1]: Leaving directory '/home/algebrato/ConsoleSbig/CMakeFiles/CMakeTmp'
+Makefile:118: recipe for target 'cmTryCompileExec2856377133/fast' failed
+make: *** [cmTryCompileExec2856377133/fast] Error 2
+
+Source file was:
+int main() { return 0; }
