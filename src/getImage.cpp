@@ -50,15 +50,10 @@ void *checkTemp(void *cam){
     while(true){
         camera->SetTemperatureRegulation(enabled, setpointTemp);
         camera->QueryTemperatureStatus(isenable, ccdTemp, setpointTemp, percentTE);
-<<<<<<< HEAD
         printf("\n\033[F\033[J");
-        //ccdTemp = (double)rand()/((double)RAND_MAX);
-        //percentTE = (double)rand()/((double)RAND_MAX);
-=======
 	setpointTemp-=0.19;
 	camera->SetTemperatureRegulation(enabled, setpointTemp);
         printf("\n\033[F\033[J");
->>>>>>> ea2fbf3c8f9438866c7c514e7ff9e1d1ef5091fb
         cout << "Temp control: CCDTemp=" << ccdTemp << " STP="<<setpointTemp << " Power=" <<percentTE*100 << "%";
 
         if(count%4==0 && setpointTemp > endpointTemp && reverse==false){
@@ -92,8 +87,6 @@ void *checkTemp(void *cam){
 		    }
 		    sleep(1);
 	    }
-	    
-	    
 	    cout << endl << "Termalized!" << endl;
 	    termalized=0;
             pthread_cond_signal(&cond2);
@@ -103,7 +96,6 @@ void *checkTemp(void *cam){
         sleep(1);
     }
     pthread_exit(ret);
-
     return NULL;
 }
 
@@ -113,23 +105,65 @@ void *grabImage(void *cam){
 
     pthread_mutex_lock(&mutex);
 
-<<<<<<< HEAD
-=======
     int *rit;
     rit= new int();
     rit[1]=1;
     cout << "rit = " << rit[1] << endl;
->>>>>>> ea2fbf3c8f9438866c7c514e7ff9e1d1ef5091fb
     int num_img;
-    string name_img;
+    string name_img, lightframe, binning, read, channel;
     string path_save("/home/algebrato/");
+    bool bFitsType;
+    bool bLightFrame = false;
+    double exptime;
+    int rm=0;
+    bool bFastReadout=false, bDualChannelMode=false;
+    SBIG_FILE_ERROR ferr;
+    PAR_ERROR err=CE_NO_ERROR;
+    
+    
     cout << endl;
+    
     cout << "Number of images in the sequence = ";
     cin >> num_img;
+    
+    
     cout << "Name of the image = ";
     cin >> name_img;
+    
+    
     cout << "Path to save = ";
     cin >> path_save;
+    int len = path_save.length();
+    if(path_save[len-1] != '/') path_save.append("/");
+
+    
+   cout << "Light Frame or Dark Frame (DF/LF): ";
+   cin >> lightframe;
+   if(lightframe == "LF" ) bLightFrame = true;
+	
+   cout << "Exposure time = ";
+   cin >> exptime;
+
+   cout << "Bin (1x1/2x2/3x3): ";
+   cin >> binning;
+   if(binning == "2x2" ){
+	   rm=1;
+   }else if(binning == "2x2"){
+	   rm=2;
+   }
+
+   cout << "Fast readout (1/0): ";
+   cin >> read;
+   if(read == "1") bFastReadout = true;
+
+   cout << "Dual channel mode (1/0): ";
+   cin >> channel;
+   if(channel == "1") bDualChannelMode=true;
+
+
+
+
+
     cout << "Sensor termalization..."<<endl;
 
     pthread_cond_signal(&cond);
@@ -142,14 +176,11 @@ void *grabImage(void *cam){
         sleep(5);
         cout << endl << "Image "<< i+1 << " grabbed" << endl;
     }
-<<<<<<< HEAD
     
     return NULL;
 
 
-=======
     pthread_exit(rit);
     cout << "rit = " << rit[1] << endl;
     return NULL;
->>>>>>> ea2fbf3c8f9438866c7c514e7ff9e1d1ef5091fb
 }

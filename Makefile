@@ -5,7 +5,7 @@ EXTRAVERSION 	=
 ###############################################################################
 ESEGUIBILE	:= ConsoleSbig
 OBJ		:= src/ConsoleSbig.o src/csbigcam.o src/csbigimg.o src/getImage.o
-CC		:= g++-4.8 
+CC		:= g++ 
 FLAGS 		:= -O2 -g -std=c++11 -Wall
 LIBS		:= -L /usr/local/lib -L /data/fits/cfitsio/lib/ -lm -lsbigudrv -lcfitsio -lm -lpthread
 INCS		:= -I /usr/include/libusb-1.0/ -I /usr/include/libusb-1.0/ -I /data/fits/cfitsio 
