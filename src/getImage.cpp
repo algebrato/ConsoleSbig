@@ -147,7 +147,7 @@ void setparameter(int *num_img, string *name_img, string *path_save,
 	cout << "Path to save = ";
 	cin >> *path_save;
 	int len = path_save->length();
-	if((string)(&prova->at(len-1)) != "/") path_save->append("/"); //Da testare, potrebbe non funzionare.
+	if((string)(&path_save->at(len-1)) != "/") path_save->append("/"); //Da testare, potrebbe non funzionare.
 
 
 	string lightframe;
@@ -182,8 +182,8 @@ void setparameter(int *num_img, string *name_img, string *path_save,
 void *grabImage(void *cam){
 	pthread_mutex_lock(&mutex);
 	ExposureData ed;
-	SBIG_FILE_ERROR ferr;
-	PAR_ERROR err=CE_NO_ERROR;
+	//SBIG_FILE_ERROR ferr;
+	//PAR_ERROR err=CE_NO_ERROR;
 
 	setparameter(&(ed.num_img), &(ed.name_img), &(ed.path_save), &(ed.bFitsType),  &(ed.bLightFrame), &(ed.exptime), &(ed.rm), &(ed.bFastReadout), &(ed.bDualChannelMode));
 	cout << "Sensor termalization..."<<endl;
