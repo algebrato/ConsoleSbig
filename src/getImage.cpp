@@ -146,9 +146,9 @@ void setparameter(int *num_img, string *name_img, string *path_save,
 
 	cout << "Path to save = ";
 	cin >> *path_save;
-	int len = path_save->length(); //potrebbe non funzionare //trovare un modo per comparare i due puntatori
-	//if( true  ) *(path_save).append("/");
-	/*if(*(path_save[len-1]) != '/') (*(path_save)).append("/");*/
+	int len = path_save->length();
+	if((string)(&prova->at(len-1)) != "/") path_save->append("/"); //Da testare, potrebbe non funzionare.
+
 
 	string lightframe;
 	cout << "Light Frame or Dark Frame (DF/LF): ";
