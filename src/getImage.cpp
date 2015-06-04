@@ -13,6 +13,45 @@ pthread_cond_t      cond  = PTHREAD_COND_INITIALIZER;
 pthread_cond_t      cond2  = PTHREAD_COND_INITIALIZER;
 pthread_mutex_t     mutex = PTHREAD_MUTEX_INITIALIZER;
 
+class ExposureData {
+	private:
+		bool is_valid;
+	public:
+		int *ret;
+		string name_img;
+	        string lightframe;
+	        string binning;
+	        string read;
+	        string channel;
+		string path_save("/home/algebrato/");
+		int num_img;
+		bool bFitsType;
+		bool bLightFrame(false);
+		double exptime(90);
+		int rm(0);
+		bool bFastReadout(false);
+	        bool bDualChannelMode=false;
+		
+		ExposureData{
+			is_valid=true;
+			ret = new int();
+			ret[0]=1;
+		};
+
+		~ExposureData{
+			is_valid=false;
+			ret[0]=0;
+		};
+
+};
+
+
+
+
+
+
+
+
 
 
 void *checkTemp(void *cam){
@@ -104,19 +143,19 @@ void *checkTemp(void *cam){
 void *grabImage(void *cam){
 
     pthread_mutex_lock(&mutex);
+    ExposureData ed;
 
-    int *rit;
-    rit= new int();
-    rit[1]=1;
-    cout << "rit = " << rit[1] << endl;
-    int num_img;
+    /*int num_img;
     string name_img, lightframe, binning, read, channel;
     string path_save("/home/algebrato/");
     bool bFitsType;
     bool bLightFrame = false;
     double exptime;
     int rm=0;
-    bool bFastReadout=false, bDualChannelMode=false;
+    bool bFastReadout=false, bDualChannelMode=false;*/
+
+
+    
     SBIG_FILE_ERROR ferr;
     PAR_ERROR err=CE_NO_ERROR;
     
@@ -124,41 +163,41 @@ void *grabImage(void *cam){
     cout << endl;
     
     cout << "Number of images in the sequence = ";
-    cin >> num_img;
+    cin >> ed.num_img;
     
     
     cout << "Name of the image = ";
-    cin >> name_img;
+    cin >> ed.name_img;
     
     
     cout << "Path to save = ";
-    cin >> path_save;
-    int len = path_save.length();
-    if(path_save[len-1] != '/') path_save.append("/");
+    cin >> ed.path_save;
+    int len = ed.path_save.length();
+    if(ed.path_save[len-1] != '/') ed.path_save.append("/");
 
     
    cout << "Light Frame or Dark Frame (DF/LF): ";
-   cin >> lightframe;
-   if(lightframe == "LF" ) bLightFrame = true;
+   cin >> ed.lightframe;
+   if(ed.lightframe == "LF" ) ed.bLightFrame = true;
 	
    cout << "Exposure time = ";
-   cin >> exptime;
+   cin >> ed.exptime;
 
    cout << "Bin (1x1/2x2/3x3): ";
-   cin >> binning;
-   if(binning == "2x2" ){
-	   rm=1;
-   }else if(binning == "2x2"){
-	   rm=2;
+   cin >> ed.binning;
+   if(ed.binning == "2x2" ){
+	   ed.rm=1;
+   }else if(ed.binning == "2x2"){
+	   ed.rm=2;
    }
 
    cout << "Fast readout (1/0): ";
-   cin >> read;
-   if(read == "1") bFastReadout = true;
+   cin >> ed.read;
+   if(ed.read == "1") ed.bFastReadout = true;
 
    cout << "Dual channel mode (1/0): ";
-   cin >> channel;
-   if(channel == "1") bDualChannelMode=true;
+   cin >> ed.channel;
+   if(ed.channel == "1") ed.bDualChannelMode=true;
 
 
 
@@ -172,7 +211,7 @@ void *grabImage(void *cam){
 
 
     cout << endl << "Grabbing ...." << endl;
-    for(int i=0; i<num_img; ++i){
+    for(int i=0; i<ed.num_img; ++i){
         sleep(5);
         cout << endl << "Image "<< i+1 << " grabbed" << endl;
     }
