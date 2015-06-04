@@ -19,10 +19,6 @@ class ExposureData {
 	public:
 		int *ret;
 		string name_img;
-	        string lightframe;
-	        string binning;
-	        string read;
-	        string channel;
 		string path_save;
 		int num_img;
 		bool bFitsType;
@@ -30,7 +26,7 @@ class ExposureData {
 		double exptime;
 		int rm;
 		bool bFastReadout;
-	        bool bDualChannelMode;
+		bool bDualChannelMode;
 		
 		ExposureData() {
 			is_valid=true;
@@ -42,7 +38,6 @@ class ExposureData {
 			is_valid=false;
 			ret[0]=0;
 		};
-
 };
 
 
@@ -139,13 +134,12 @@ void *checkTemp(void *cam){
 }
 
 
-void setparameter(int *num_img, string *name_img, string *path_save,  \
-	          bool *bFitsType, bool *bLightFrame, double *exptime,\
-		  int *rm, bool *bFastReadout, bool *bDualChannelMode){
-    	cout << endl;
-    	cout << "Number of images in the sequence = ";
+void setparameter(int *num_img, string *name_img, string *path_save,
+					bool *bFitsType, bool *bLightFrame, double *exptime,
+					int *rm, bool *bFastReadout, bool *bDualChannelMode){
+	cout << endl;
+	cout << "Number of images in the sequence = ";
 	cin >> *num_img;
-
 
 	cout << "Name of the image = ";
 	cin >> *name_img;
