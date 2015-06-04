@@ -13,6 +13,40 @@ pthread_cond_t      cond  = PTHREAD_COND_INITIALIZER;
 pthread_cond_t      cond2  = PTHREAD_COND_INITIALIZER;
 pthread_mutex_t     mutex = PTHREAD_MUTEX_INITIALIZER;
 
+class ExposureData {
+	private:
+		bool is_valid;
+	public:
+		int *ret;
+		string name_img;
+		string path_save;
+		int num_img;
+		bool bFitsType;
+		bool bLightFrame;
+		double exptime;
+		int rm;
+		bool bFastReadout;
+		bool bDualChannelMode;
+		
+		ExposureData() {
+			is_valid=true;
+			ret = new int();
+			ret[0]=1;
+		};
+
+		~ExposureData() {
+			is_valid=false;
+			ret[0]=0;
+		};
+};
+
+
+
+
+
+
+
+
 
 
 void *checkTemp(void *cam){
@@ -100,87 +134,74 @@ void *checkTemp(void *cam){
 }
 
 
+void setparameter(int *num_img, string *name_img, string *path_save,
+					bool *bFitsType, bool *bLightFrame, double *exptime,
+					int *rm, bool *bFastReadout, bool *bDualChannelMode){
+	cout << endl;
+	cout << "Number of images in the sequence = ";
+	cin >> *num_img;
+
+	cout << "Name of the image = ";
+	cin >> *name_img;
+
+	cout << "Path to save = ";
+	cin >> *path_save;
+	int len = path_save->length();
+	if((string)(&prova->at(len-1)) != "/") path_save->append("/"); //Da testare, potrebbe non funzionare.
+
+
+	string lightframe;
+	cout << "Light Frame or Dark Frame (DF/LF): ";
+	cin >> lightframe;
+	if(lightframe == "LF" ) *bLightFrame = true;
+
+	cout << "Exposure time = ";
+	cin >> *exptime;
+
+	string binning;
+	cout << "Bin (1x1/2x2/3x3): ";
+	cin >> binning;
+	if(binning == "1x1" ){
+		*rm=0;
+	}else if(binning == "2x2"){
+		*rm=1;
+	}
+
+	string read;
+	cout << "Fast readout (1/0): ";
+	cin >> read;
+	if(read == "1") *bFastReadout = true;
+
+	string channel;
+	cout << "Dual channel mode (1/0): ";
+	cin >> channel;
+	if(channel == "1") *bDualChannelMode=true;
+}
+
 
 void *grabImage(void *cam){
+	pthread_mutex_lock(&mutex);
+	ExposureData ed;
+	SBIG_FILE_ERROR ferr;
+	PAR_ERROR err=CE_NO_ERROR;
 
-    pthread_mutex_lock(&mutex);
+	setparameter(&(ed.num_img), &(ed.name_img), &(ed.path_save), &(ed.bFitsType),  &(ed.bLightFrame), &(ed.exptime), &(ed.rm), &(ed.bFastReadout), &(ed.bDualChannelMode));
+	cout << "Sensor termalization..."<<endl;
 
-    int *rit;
-    rit= new int();
-    rit[1]=1;
-    cout << "rit = " << rit[1] << endl;
-    int num_img;
-    string name_img, lightframe, binning, read, channel;
-    string path_save("/home/algebrato/");
-    bool bFitsType;
-    bool bLightFrame = false;
-    double exptime;
-    int rm=0;
-    bool bFastReadout=false, bDualChannelMode=false;
-    SBIG_FILE_ERROR ferr;
-    PAR_ERROR err=CE_NO_ERROR;
+	pthread_cond_signal(&cond);
+	pthread_cond_wait(&cond2,&mutex);
+
+
+
+	cout << endl << "Grabbing ...." << endl;
+	for(int i=0; i<ed.num_img; ++i){
+		sleep(5);
+		cout << endl << "Image "<< i+1 << " grabbed" << endl;
+	}
     
-    
-    cout << endl;
-    
-    cout << "Number of images in the sequence = ";
-    cin >> num_img;
-    
-    
-    cout << "Name of the image = ";
-    cin >> name_img;
-    
-    
-    cout << "Path to save = ";
-    cin >> path_save;
-    int len = path_save.length();
-    if(path_save[len-1] != '/') path_save.append("/");
-
-    
-   cout << "Light Frame or Dark Frame (DF/LF): ";
-   cin >> lightframe;
-   if(lightframe == "LF" ) bLightFrame = true;
-	
-   cout << "Exposure time = ";
-   cin >> exptime;
-
-   cout << "Bin (1x1/2x2/3x3): ";
-   cin >> binning;
-   if(binning == "2x2" ){
-	   rm=1;
-   }else if(binning == "2x2"){
-	   rm=2;
-   }
-
-   cout << "Fast readout (1/0): ";
-   cin >> read;
-   if(read == "1") bFastReadout = true;
-
-   cout << "Dual channel mode (1/0): ";
-   cin >> channel;
-   if(channel == "1") bDualChannelMode=true;
+	return NULL;
 
 
-
-
-
-    cout << "Sensor termalization..."<<endl;
-
-    pthread_cond_signal(&cond);
-    pthread_cond_wait(&cond2,&mutex);
-
-
-
-    cout << endl << "Grabbing ...." << endl;
-    for(int i=0; i<num_img; ++i){
-        sleep(5);
-        cout << endl << "Image "<< i+1 << " grabbed" << endl;
-    }
-    
-    return NULL;
-
-
-    pthread_exit(rit);
-    cout << "rit = " << rit[1] << endl;
-    return NULL;
+	pthread_exit(ed.ret);
+	return NULL;
 }
