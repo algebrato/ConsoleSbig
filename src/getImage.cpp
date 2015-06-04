@@ -187,28 +187,27 @@ void setparameter(int *num_img, string *name_img, string *path_save,  \
 
 void *grabImage(void *cam){
 	pthread_mutex_lock(&mutex);
-    	ExposureData ed;
-
-    	SBIG_FILE_ERROR ferr;
-    	PAR_ERROR err=CE_NO_ERROR;
+	ExposureData ed;
+	SBIG_FILE_ERROR ferr;
+	PAR_ERROR err=CE_NO_ERROR;
 
 	setparameter(&(ed.num_img), &(ed.name_img), &(ed.path_save), &(ed.bFitsType),  &(ed.bLightFrame), &(ed.exptime), &(ed.rm), &(ed.bFastReadout), &(ed.bDualChannelMode));
 	cout << "Sensor termalization..."<<endl;
 
 	pthread_cond_signal(&cond);
-    	pthread_cond_wait(&cond2,&mutex);
+	pthread_cond_wait(&cond2,&mutex);
 
 
 
-    	cout << endl << "Grabbing ...." << endl;
-    	for(int i=0; i<ed.num_img; ++i){
-        	sleep(5);
-        	cout << endl << "Image "<< i+1 << " grabbed" << endl;
-    	}
+	cout << endl << "Grabbing ...." << endl;
+	for(int i=0; i<ed.num_img; ++i){
+		sleep(5);
+		cout << endl << "Image "<< i+1 << " grabbed" << endl;
+	}
     
-    	return NULL;
+	return NULL;
 
 
-    	pthread_exit(ed.ret);
-    	return NULL;
+	pthread_exit(ed.ret);
+	return NULL;
 }
