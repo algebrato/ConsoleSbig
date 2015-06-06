@@ -18,6 +18,8 @@ class ExposureData {
 		bool is_valid;
 	public:
 		int *ret;
+		int fullHeight;
+	        int fullWidth;
 		string name_img;
 		string path_save;
 		int num_img;
@@ -190,8 +192,11 @@ void printparameter(int *num_img, string *name_img, string *path_save,
 void *grabImage(void *cam){
 	pthread_mutex_lock(&mutex);
 	ExposureData ed;
-	//SBIG_FILE_ERROR ferr;
-	//PAR_ERROR err=CE_NO_ERROR;
+	CSBIGCam *camera = (CSBIGCam *)cam;
+	CSBIGImg *ImgSbi = new CSBIGImg;	
+
+	SBIG_FILE_ERROR ferr;
+	PAR_ERROR err=CE_NO_ERROR;
 
 	setparameter(&(ed.num_img), &(ed.name_img), &(ed.path_save), 
 		     &(ed.bFitsType),  &(ed.bLightFrame), &(ed.exptime),
@@ -200,7 +205,6 @@ void *grabImage(void *cam){
 	printparameter(&(ed.num_img), &(ed.name_img), &(ed.path_save), 
 		       &(ed.bFitsType),  &(ed.bLightFrame), &(ed.exptime), 
 		       &(ed.rm), &(ed.bFastReadout), &(ed.bDualChannelMode));
-	
 
 	cout << "Sensor termalization..."<<endl;
 
@@ -208,14 +212,75 @@ void *grabImage(void *cam){
 	pthread_cond_wait(&cond2,&mutex);
 
 
+	camera->SetActiveCCD(CCD_IMAGING);
+	camera->SetExposureTime(ed.exptime);
+	camera->SetReadoutMode(ed.rm);
+	camera->SetABGState(ABG_LOW7);
+	camera->SetFastReadout(ed.bFastReadout);
+	camera->SetDualChannelMode(ed.bDualChannelMode);
+	camera->GetFullFrame(ed.fullWidth, ed.fullHeight);
+	
+	ImgSbi->AllocateImageBuffer(ed.fullHeight, ed.fullWidth);
 
-	cout << endl << "Grabbing ...." << endl;
-	for(int i=0; i<ed.num_img; ++i){
-		sleep(5);
-		cout << endl << "Image "<< i+1 << " grabbed" << endl;
-	}
-    
-	return NULL;
+	for(int i=1; i<=ed.num_img; ++i){
+		if(ed.bLightFrame){
+			cout << "Taking light frame n. = " << i << endl;
+			if ((err = camera->GrabImage(ImgSbi, SBDF_LIGHT_ONLY)) != CE_NO_ERROR){
+				 cout << "CSBIGCam error        : " << camera->GetErrorString(err) << endl;
+				 break;
+			}
+			ed.name_img += "_LF_" ;
+		}else{
+			cout << "Taking dark frame n. = " << i << endl;
+			if ((err = camera->GrabImage(ImgSbi, SBDF_DARK_ONLY)) != CE_NO_ERROR){
+				cout << "CSBIGCam error        : " << camera->GetErrorString(err) << endl;
+				break;
+			}
+			ed.name_img += "_DF_";
+		}
+		char timeBuf[128];
+		struct tm* pTm;
+		struct timeval tv;
+		struct timezone tz;
+		gettimeofday(&tv, &tz);
+		pTm = localtime(&(tv.tv_sec));
+		sprintf(timeBuf, "%04d-%02d-%02dT%02d:%02d:%02d.%03ld",
+			       	pTm->tm_year + 1900, 
+				pTm->tm_mon + 1, 
+				pTm->tm_mday,
+				pTm->tm_hour,
+				pTm->tm_min,
+			    	pTm->tm_sec,
+			       	(tv.tv_usec/1000));
+		
+		ed.name_img += timeBuf;
+		ed.path_save += ed.name_img;
+
+		if(ed.bFitsType){
+			ed.path_save += ".fits";
+			if( (ferr = ImgSbi->SaveImage((ed.path_save).c_str(), SBIF_FITS)) != SBFE_NO_ERROR){
+				cout << " FITS_FORMAT_SAVE error        : " << ferr << endl;
+				break;
+			}
+		}else{
+			ed.path_save += ".sbig";
+			if( (ferr = ImgSbi->SaveImage((ed.path_save).c_str(), SBIF_COMPRESSED)) != SBFE_NO_ERROR){
+				cout << " SBIG_FORMAT_SAVE error        : " << ferr << endl;
+				break;
+			}
+		}
+
+		cout << "Image save as : " << ed.path_save << endl;
+
+	} //qui si chiude il for
+
+	//Chiudo connessione,driver, distruggo divece ed immagine. 
+	if((err = camera->CloseDevice()) != CE_NO_ERROR) {cout << "ERROR in CloseDevice" << endl;}
+	if((err = camera->CloseDriver()) != CE_NO_ERROR) {cout << "ERROR in CloseDriver" << endl;}
+
+	if(ImgSbi) delete ImgSbi;
+	if(camera) delete camera;
+		
 
 
 	pthread_exit(ed.ret);

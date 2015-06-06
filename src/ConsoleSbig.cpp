@@ -29,7 +29,7 @@ int main(){
     }
     camera->QueryTemperatureStatus(enabled, ccdTemp, setpointTemp, percentTE);
 
-    cout << "Model = " << camera->GetCameraTypeString() << "\tLink status:UP" << endl;
+    cout << "Link established to =" << camera->GetCameraTypeString() << endl;
     if(enabled){
         cout << "Temperature control is on" <<endl;
         cout << "Temperature = "  << ccdTemp << endl;
