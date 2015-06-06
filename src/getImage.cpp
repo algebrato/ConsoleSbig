@@ -41,14 +41,6 @@ class ExposureData {
 };
 
 
-
-
-
-
-
-
-
-
 void *checkTemp(void *cam){
     pthread_mutex_lock(&mutex);
 
@@ -165,6 +157,8 @@ void setparameter(int *num_img, string *name_img, string *path_save,
 		*rm=0;
 	}else if(binning == "2x2"){
 		*rm=1;
+	}else{
+		*rm=2;
 	}
 
 	string read;
@@ -178,6 +172,20 @@ void setparameter(int *num_img, string *name_img, string *path_save,
 	if(channel == "1") *bDualChannelMode=true;
 }
 
+void printparameter(int *num_img, string *name_img, string *path_save,
+                    bool *bFitsType, bool *bLightFrame, double *exptime, 
+		    int *rm, bool *bFastReadout, bool *bDualChannelMode){
+	cout << "Num Image  =" << *num_img          << endl
+	     << "Nome Img   =" << *name_img         << endl
+	     << "Path save  =" << *path_save        << endl
+	     << "Fits type  =" << *bFitsType        << endl
+	     << "LightFrame =" << *bLightFrame      << endl
+	     << "Exp Time   =" << *exptime          << endl
+	     << "RM         =" << *rm               << endl
+	     << "Fast RO    =" << *bFastReadout     << endl
+	     << "DualChannel=" << *bDualChannelMode << endl;
+}
+
 
 void *grabImage(void *cam){
 	pthread_mutex_lock(&mutex);
@@ -185,7 +193,15 @@ void *grabImage(void *cam){
 	//SBIG_FILE_ERROR ferr;
 	//PAR_ERROR err=CE_NO_ERROR;
 
-	setparameter(&(ed.num_img), &(ed.name_img), &(ed.path_save), &(ed.bFitsType),  &(ed.bLightFrame), &(ed.exptime), &(ed.rm), &(ed.bFastReadout), &(ed.bDualChannelMode));
+	setparameter(&(ed.num_img), &(ed.name_img), &(ed.path_save), 
+		     &(ed.bFitsType),  &(ed.bLightFrame), &(ed.exptime),
+		     &(ed.rm), &(ed.bFastReadout), &(ed.bDualChannelMode));
+
+	printparameter(&(ed.num_img), &(ed.name_img), &(ed.path_save), 
+		       &(ed.bFitsType),  &(ed.bLightFrame), &(ed.exptime), 
+		       &(ed.rm), &(ed.bFastReadout), &(ed.bDualChannelMode));
+	
+
 	cout << "Sensor termalization..."<<endl;
 
 	pthread_cond_signal(&cond);
