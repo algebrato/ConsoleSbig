@@ -84,12 +84,12 @@ void *checkTemp(void *cam){
         printf("\n\033[F\033[J");
         cout << "Temp control: CCDTemp=" << ccdTemp << " STP="<<setpointTemp << " Power=" <<percentTE*100 << "%";
 
-        if(count%4==0 && setpointTemp > endpointTemp && reverse==false){
+        if(count%20==0 && setpointTemp > endpointTemp && reverse==false){
             setpointTemp -= delta;
 	    if(setpointTemp < endpointTemp) setpointTemp = endpointTemp;
         }
 
-	if(count%4==0 && setpointTemp < endpointTemp && reverse==true){
+	if(count%20==0 && setpointTemp < endpointTemp && reverse==true){
             setpointTemp += delta;
 	    if(setpointTemp > endpointTemp) setpointTemp = endpointTemp;
 	}
@@ -102,8 +102,8 @@ void *checkTemp(void *cam){
 		    counter++;
 		    camera->QueryTemperatureStatus(isenable, ccdTemp, setpointTemp, percentTE);
 		    printf("\n\033[F\033[J");
-		    cout << "Temp control: CCDTemp=" << ccdTemp << " STP="<<setpointTemp << " Power=" <<percentTE*100 << "%" << " Iterator = (" << counter <<"/35)"; //33-->35 ???
-		    if(counter%35==0){
+		    cout << "Temp control: CCDTemp=" << ccdTemp << " STP="<<setpointTemp << " Power=" <<percentTE*100 << "%" << " Iterator = (" << counter <<"/36)"; //33-->35 ???
+		    if(counter%36==0){
 			    cout <<endl;
 			    cout << "Start image grab? (yes/no): ";
 			    cin >> yes_grab;
@@ -172,6 +172,11 @@ void setparameter(int *num_img, string *name_img, string *path_save,
 	cout << "Dual channel mode (1/0): ";
 	cin >> channel;
 	if(channel == "1") *bDualChannelMode=true;
+	
+	//only fits
+	*bFitsType = 1;
+
+
 }
 
 void printparameter(int *num_img, string *name_img, string *path_save,
@@ -194,6 +199,8 @@ void *grabImage(void *cam){
 	ExposureData ed;
 	CSBIGCam *camera = (CSBIGCam *)cam;
 	CSBIGImg *ImgSbi = new CSBIGImg;	
+	
+	string name_TOT="";
 
 	SBIG_FILE_ERROR ferr;
 	PAR_ERROR err=CE_NO_ERROR;
@@ -221,22 +228,24 @@ void *grabImage(void *cam){
 	camera->GetFullFrame(ed.fullWidth, ed.fullHeight);
 	
 	ImgSbi->AllocateImageBuffer(ed.fullHeight, ed.fullWidth);
-
+	
 	for(int i=1; i<=ed.num_img; ++i){
+		name_TOT = ed.path_save; 
+		name_TOT += ed.name_img;
 		if(ed.bLightFrame){
 			cout << "Taking light frame n. = " << i << endl;
 			if ((err = camera->GrabImage(ImgSbi, SBDF_LIGHT_ONLY)) != CE_NO_ERROR){
 				 cout << "CSBIGCam error        : " << camera->GetErrorString(err) << endl;
 				 break;
 			}
-			ed.name_img += "_LF_" ;
+			name_TOT += "_LF_" ;
 		}else{
 			cout << "Taking dark frame n. = " << i << endl;
 			if ((err = camera->GrabImage(ImgSbi, SBDF_DARK_ONLY)) != CE_NO_ERROR){
 				cout << "CSBIGCam error        : " << camera->GetErrorString(err) << endl;
 				break;
 			}
-			ed.name_img += "_DF_";
+			name_TOT += "_DF_";
 		}
 		char timeBuf[128];
 		struct tm* pTm;
@@ -253,24 +262,24 @@ void *grabImage(void *cam){
 			    	pTm->tm_sec,
 			       	(tv.tv_usec/1000));
 		
-		ed.name_img += timeBuf;
-		ed.path_save += ed.name_img;
+		name_TOT += timeBuf;
 
 		if(ed.bFitsType){
-			ed.path_save += ".fits";
-			if( (ferr = ImgSbi->SaveImage((ed.path_save).c_str(), SBIF_FITS)) != SBFE_NO_ERROR){
+			name_TOT += ".fits";
+			if( (ferr = ImgSbi->SaveImage((name_TOT).c_str(), SBIF_FITS)) != SBFE_NO_ERROR){
 				cout << " FITS_FORMAT_SAVE error        : " << ferr << endl;
 				break;
 			}
 		}else{
-			ed.path_save += ".sbig";
-			if( (ferr = ImgSbi->SaveImage((ed.path_save).c_str(), SBIF_COMPRESSED)) != SBFE_NO_ERROR){
+			name_TOT += ".sbig";
+			if( (ferr = ImgSbi->SaveImage((name_TOT).c_str(), SBIF_COMPRESSED)) != SBFE_NO_ERROR){
 				cout << " SBIG_FORMAT_SAVE error        : " << ferr << endl;
 				break;
 			}
 		}
 
-		cout << "Image save as : " << ed.path_save << endl;
+		cout << "Image save as : " << name_TOT << endl;
+		name_TOT = "";
 
 	} //qui si chiude il for
 
