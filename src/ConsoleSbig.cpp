@@ -36,7 +36,7 @@ int main(){
 		cout << "Temperature control is on" <<endl;
 		cout << "Temperature = "  << ccdTemp << endl;
 		cout << "SetPoint    = " << setpointTemp << endl;
-        	cout << "Percent     = " << percentTE << endl;
+        	cout << "Percent     = " << (percentTE*100) << endl;
 		cout << endl;
 		cout << "Starting Temperature Control Thread..." << endl;
 		cout << endl;

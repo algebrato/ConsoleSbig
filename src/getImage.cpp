@@ -6,6 +6,10 @@
 #include <string>
 #include <cmath>
 #include <pthread.h>
+#include <fstream>
+#include <list>
+
+//#define TEST
 
 using namespace std;
 
@@ -75,10 +79,9 @@ void *checkTemp(void *cam){
 
     pthread_cond_wait(&cond,&mutex);
 
-    while(true){
+    while(true){//aggiustare un po' le cifre significative del STP
         camera->SetTemperatureRegulation(enabled, setpointTemp);
         camera->QueryTemperatureStatus(isenable, ccdTemp, setpointTemp, percentTE);
-        printf("\n\033[F\033[J");
 	setpointTemp-=0.19;
 	camera->SetTemperatureRegulation(enabled, setpointTemp);
         printf("\n\033[F\033[J");
@@ -99,10 +102,10 @@ void *checkTemp(void *cam){
 
 
             while(true){
-		    counter++;
+		    ++counter;
 		    camera->QueryTemperatureStatus(isenable, ccdTemp, setpointTemp, percentTE);
 		    printf("\n\033[F\033[J");
-		    cout << "Temp control: CCDTemp=" << ccdTemp << " STP="<<setpointTemp << " Power=" <<percentTE*100 << "%" << " Iterator = (" << counter <<"/36)"; //33-->35 ???
+		    cout << "Temp control: CCDTemp=" << ccdTemp << " STP="<<setpointTemp << " Power=" <<percentTE*100 << "%" << " Iterator = (" << counter <<"/36)"; //33--> 35 (colpa del revert line!) 
 		    if(counter%36==0){
 			    cout <<endl;
 			    cout << "Start image grab? (yes/no): ";
@@ -120,7 +123,6 @@ void *checkTemp(void *cam){
             pthread_cond_signal(&cond2);
             pthread_mutex_unlock(&mutex);
         }
-        ++count;
         sleep(1);
     }
     pthread_exit(ret);
@@ -182,16 +184,63 @@ void setparameter(int *num_img, string *name_img, string *path_save,
 void printparameter(int *num_img, string *name_img, string *path_save,
                     bool *bFitsType, bool *bLightFrame, double *exptime, 
 		    int *rm, bool *bFastReadout, bool *bDualChannelMode){
-	cout << "Num Image  =" << *num_img          << endl
-	     << "Nome Img   =" << *name_img         << endl
-	     << "Path save  =" << *path_save        << endl
-	     << "Fits type  =" << *bFitsType        << endl
-	     << "LightFrame =" << *bLightFrame      << endl
-	     << "Exp Time   =" << *exptime          << endl
-	     << "RM         =" << *rm               << endl
-	     << "Fast RO    =" << *bFastReadout     << endl
-	     << "DualChannel=" << *bDualChannelMode << endl;
+	fstream file_save;
+	file_save.open(".parameters", ios::out);
+	cout << "Num Image  = " << *num_img          << endl
+	     << "Nome Img   = " << *name_img         << endl
+	     << "Path save  = " << *path_save        << endl
+	     << "Fits type  = " << *bFitsType        << endl
+	     << "LightFrame = " << *bLightFrame      << endl
+	     << "Exp Time   = " << *exptime          << endl
+	     << "RM         = " << *rm               << endl
+	     << "Fast RO    = " << *bFastReadout     << endl
+	     << "DualChannel= " << *bDualChannelMode << endl;
+	
+	file_save << "Num_Image__= " << *num_img          << endl
+	          << "Nome_Img___= " << *name_img         << endl
+	          << "Path_save__= " << *path_save        << endl
+	          << "Fits_type__= " << *bFitsType        << endl
+	          << "LightFrame_= " << *bLightFrame      << endl
+	          << "Exp_Time___= " << *exptime          << endl
+	          << "RM_________= " << *rm               << endl
+	          << "Fast_RO____= " << *bFastReadout     << endl
+	          << "DualChannel= " << *bDualChannelMode << endl;
+
 }
+
+bool exists_file (const std::string& name) {
+	if (FILE *file = fopen(name.c_str(), "r")) {
+		fclose(file);
+		return true;
+	} else {
+		return false;
+	}   
+}
+
+
+void check_all(){
+	
+	fstream input;
+	list<string> l;
+	string a, b;
+	int k=0;
+	if(exists_file(".parameters")){
+		input.open(".parameters", ios::in);
+		cout << "esiste" << endl;
+		while(!input.eof()){
+			input>>a>>b;
+			l.push_back(b);
+			k++;
+		}
+	} else {
+		cout << "non esiste" << endl;
+	}
+	for(auto elem : l)
+		cout << elem << endl;
+}
+
+
+
 
 
 void *grabImage(void *cam){
@@ -204,6 +253,26 @@ void *grabImage(void *cam){
 
 	SBIG_FILE_ERROR ferr;
 	PAR_ERROR err=CE_NO_ERROR;
+	
+	fstream input;
+	list<string> l;
+	string a, b, loadfile;
+	int k=0;
+	if(exists_file(".parameters")){
+		cout << "A parameters file has been found. Load it or modify? (load/modify): ";
+		cin  >> loadfile;
+		if(loadfile == "load"){
+			input.open(".parameters", ios::in);
+			while(!input.eof()){
+				input>>a>>b;
+				l.push_back(b);
+				k++;
+			}
+			ed.num_img = (int)l[0];
+		}
+	} else {
+		cout << "Not found" << endl;
+	}
 
 	setparameter(&(ed.num_img), &(ed.name_img), &(ed.path_save), 
 		     &(ed.bFitsType),  &(ed.bLightFrame), &(ed.exptime),
@@ -213,12 +282,12 @@ void *grabImage(void *cam){
 		       &(ed.bFitsType),  &(ed.bLightFrame), &(ed.exptime), 
 		       &(ed.rm), &(ed.bFastReadout), &(ed.bDualChannelMode));
 
-	cout << "Sensor termalization..."<<endl;
-
+	cout << "Sensor termalization...";
+	
 	pthread_cond_signal(&cond);
 	pthread_cond_wait(&cond2,&mutex);
 
-
+	
 	camera->SetActiveCCD(CCD_IMAGING);
 	camera->SetExposureTime(ed.exptime);
 	camera->SetReadoutMode(ed.rm);
@@ -289,9 +358,15 @@ void *grabImage(void *cam){
 
 	if(ImgSbi) delete ImgSbi;
 	if(camera) delete camera;
+
 		
-
-
+	#ifdef TEST
+		for(int i=0; i < 10; ++i){
+			cout << "Grabbing image number " << i << "..." << endl;
+			sleep(5);
+		}
+	#endif
+	
 	pthread_exit(ed.ret);
 	return NULL;
 }
