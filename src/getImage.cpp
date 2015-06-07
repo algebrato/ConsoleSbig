@@ -274,6 +274,25 @@ void *grabImage(void *cam){
 		cout << "Not found" << endl;
 	}
 
+/* Esempio che si può seguire per caricare i dati da file
+int main(){
+	list<string> l;
+	std::list<string>::iterator it;
+	l = {"1","2","3","4","5","6","7"};
+	it = l.begin();
+
+	advance(it,2);
+	
+	string prova = *it;
+
+	int a = atoi(prova.c_str());
+	cout << a << endl;
+
+
+
+	return 0;
+}
+*/
 	setparameter(&(ed.num_img), &(ed.name_img), &(ed.path_save), 
 		     &(ed.bFitsType),  &(ed.bLightFrame), &(ed.exptime),
 		     &(ed.rm), &(ed.bFastReadout), &(ed.bDualChannelMode));
