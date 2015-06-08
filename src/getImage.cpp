@@ -231,7 +231,7 @@ void *grabImage(void *cam){
 	std::fstream input;
 	std::list<string> l;
 	std::string str_appo;
-	std::list<string>:iterator it;
+	std::list<string>::iterator it;
 	string a, b, loadfile;
 	int k=0;
 	if(exists_file(".parameters")){
@@ -247,7 +247,7 @@ void *grabImage(void *cam){
 			/* Some assegnations ... boring...*/
 			it = l.begin();
 			str_appo = *it;
-			ed.num_img = atoi(str_appo);
+			ed.num_img = atoi(str_appo.c_str());
 
 			advance(it,1);
 			ed.name_img = *it;
@@ -273,11 +273,11 @@ void *grabImage(void *cam){
 
 			advance(it,1);
 			str_appo = *it;
-			ed.exptime = atof(str_appo);
+			ed.exptime = atof(str_appo.c_str());
 
 			advance(it,1); 
 			str_appo = *it;
-			ed.rm = atoi(str_appo);
+			ed.rm = atoi(str_appo.c_str());
 
 			advance(it,1);
 			str_appo = *it;

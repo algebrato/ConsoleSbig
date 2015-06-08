@@ -10,7 +10,6 @@ void splash(){
 ++++++ Seveso Astronomical Observatory - MPCcode: C24  ++++++\n\
 + ConsoleSbig - Control tools for USB-SBIG devices          +\n\
 + Version    : 0                                            +\n\
-+ Last Update: 06-Jun-2015                                  +\n\
 + Devel      : Stefano Mandelli                             +\n\
 + License    : GPLv2					    +\n\
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n"\
