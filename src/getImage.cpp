@@ -217,32 +217,6 @@ bool exists_file (const std::string& name) {
 	}   
 }
 
-
-void check_all(){
-	
-	fstream input;
-	list<string> l;
-	string a, b;
-	int k=0;
-	if(exists_file(".parameters")){
-		input.open(".parameters", ios::in);
-		cout << "esiste" << endl;
-		while(!input.eof()){
-			input>>a>>b;
-			l.push_back(b);
-			k++;
-		}
-	} else {
-		cout << "non esiste" << endl;
-	}
-	for(auto elem : l)
-		cout << elem << endl;
-}
-
-
-
-
-
 void *grabImage(void *cam){
 	pthread_mutex_lock(&mutex);
 	ExposureData ed;
@@ -254,8 +228,10 @@ void *grabImage(void *cam){
 	SBIG_FILE_ERROR ferr;
 	PAR_ERROR err=CE_NO_ERROR;
 	
-	fstream input;
-	list<string> l;
+	std::fstream input;
+	std::list<string> l;
+	std::string str_appo;
+	std::list<string>:iterator it;
 	string a, b, loadfile;
 	int k=0;
 	if(exists_file(".parameters")){
@@ -268,38 +244,69 @@ void *grabImage(void *cam){
 				l.push_back(b);
 				k++;
 			}
-			ed.num_img = (int)l[0];
-		}
-	} else {
-		cout << "Not found" << endl;
-	}
+			/* Some assegnations ... boring...*/
+			it = l.begin();
+			str_appo = *it;
+			ed.num_img = atoi(str_appo);
 
-/* Esempio che si può seguire per caricare i dati da file
-int main(){
-	list<string> l;
-	std::list<string>::iterator it;
-	l = {"1","2","3","4","5","6","7"};
-	it = l.begin();
+			advance(it,1);
+			ed.name_img = *it;
 
-	advance(it,2);
+			advance(it,1);
+			ed.path_save = *it;
+
+			advance(it,1);
+			str_appo = *it;
+			if(str_appo == "1"){
+				ed.bFitsType = true;
+			}else{
+				ed.bFitsType = false;
+			}
+
+			advance(it,1);
+			str_appo = *it;
+			if(str_appo == "1"){
+				ed.bLightFrame = true;
+			}else{
+				ed.bLightFrame = false;
+			}
+
+			advance(it,1);
+			str_appo = *it;
+			ed.exptime = atof(str_appo);
+
+			advance(it,1); 
+			str_appo = *it;
+			ed.rm = atoi(str_appo);
+
+			advance(it,1);
+			str_appo = *it;
+			if(str_appo == "1"){
+				ed.bFastReadout = true;
+			}else{
+				ed.bFastReadout = false;
+			}
 	
-	string prova = *it;
+			advance(it,1);
+			str_appo = *it;
+			if(str_appo == "1"){
+				ed.bDualChannelMode = true;
+			}else{
+				ed.bDualChannelMode = false;
+			}
+			
+		}
+	}//end if .parameters exists
+	else {
+		cout << "Modify/Create new file .parameters:" << endl;
+		setparameter(&(ed.num_img), &(ed.name_img), &(ed.path_save), 
+		     	&(ed.bFitsType),  &(ed.bLightFrame), &(ed.exptime),
+		     	&(ed.rm), &(ed.bFastReadout), &(ed.bDualChannelMode));
 
-	int a = atoi(prova.c_str());
-	cout << a << endl;
-
-
-
-	return 0;
-}
-*/
-	setparameter(&(ed.num_img), &(ed.name_img), &(ed.path_save), 
-		     &(ed.bFitsType),  &(ed.bLightFrame), &(ed.exptime),
-		     &(ed.rm), &(ed.bFastReadout), &(ed.bDualChannelMode));
-
-	printparameter(&(ed.num_img), &(ed.name_img), &(ed.path_save), 
-		       &(ed.bFitsType),  &(ed.bLightFrame), &(ed.exptime), 
-		       &(ed.rm), &(ed.bFastReadout), &(ed.bDualChannelMode));
+		printparameter(&(ed.num_img), &(ed.name_img), &(ed.path_save), 
+		       	&(ed.bFitsType),  &(ed.bLightFrame), &(ed.exptime), 
+		       	&(ed.rm), &(ed.bFastReadout), &(ed.bDualChannelMode));
+	}
 
 	cout << "Sensor termalization...";
 	
