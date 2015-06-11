@@ -176,7 +176,14 @@ void setparameter(int *num_img, string *name_img, string *path_save,
 	if(channel == "1") *bDualChannelMode=true;
 	
 	//only fits
-	*bFitsType = 1;
+	string fitsbig;
+	cout << "Frame format (fits/sbig): ";
+	cin >> fitsbig;
+	if(fitsbig == "fits"){
+		*bFitsType = true;
+	}else{
+		*bFitsType = false; 
+	}
 
 
 }
@@ -298,7 +305,7 @@ void *grabImage(void *cam){
 		}
 	}//end if .parameters exists
 	else {
-		cout << "Modify/Create new file .parameters:" << endl;
+		cout << "Modify/Create new file .parameters..." << endl;
 		setparameter(&(ed.num_img), &(ed.name_img), &(ed.path_save), 
 		     	&(ed.bFitsType),  &(ed.bLightFrame), &(ed.exptime),
 		     	&(ed.rm), &(ed.bFastReadout), &(ed.bDualChannelMode));
@@ -348,14 +355,13 @@ void *grabImage(void *cam){
 		struct timezone tz;
 		gettimeofday(&tv, &tz);
 		pTm = localtime(&(tv.tv_sec));
-		sprintf(timeBuf, "%04d-%02d-%02dT%02d:%02d:%02d.%03ld",
+		sprintf(timeBuf, "%04d-%02d-%02dT%02d-%02d-%02d",
 			       	pTm->tm_year + 1900, 
 				pTm->tm_mon + 1, 
 				pTm->tm_mday,
 				pTm->tm_hour,
 				pTm->tm_min,
-			    	pTm->tm_sec,
-			       	(tv.tv_usec/1000));
+			    	pTm->tm_sec); //Last field of name are seconds
 		
 		name_TOT += timeBuf;
 
