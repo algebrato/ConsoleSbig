@@ -18,6 +18,15 @@ ${ESEGUIBILE}: ${OBJ}
 
 
 .PHONY: clean
+.PHONY: pull
+.PHONY: commit
+.PHONY: push
 
 clean:
 	rm -rf ${ESEGUIBILE} src/*.x src/*.out src/*.o
+pull:
+	git pull
+commit: 
+	git commit -a 
+push:
+	git push
