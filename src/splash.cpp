@@ -20,7 +20,7 @@ void splash(){
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n"\
 );
 	cout << endl; 
-	cout << "Tryng to load driver and establish a connection..." << endl;
+	cout << "Trying to load driver and establish a connection..." << endl;
 	cout << endl;
 
 }
